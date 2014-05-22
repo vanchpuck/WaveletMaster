@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
 import java.util.Arrays;
 
@@ -17,13 +17,14 @@ public class Signal {
     
     private double[] data;
     
-    protected Signal(double[] input, int h, int w){
+    public Signal(double[] input, int h, int w){
         this.data = input;
         this.height = h;
         this.width = w;
     }
     
-    protected Signal(int h, int w){
+    public Signal(int h, int w){
+    	this.data = new double[h*w];
         this.height = h;
         this.width = w;
     }
@@ -35,7 +36,7 @@ public class Signal {
         double[] rowData = new double[w];
         
         for(int oy=y,i=0; i<h; oy++,i++){
-            rowData = Arrays.copyOfRange(this.data, oy*this.width+x, oy*this.width+x+w);
+            rowData = Arrays.copyOfRange(this.getData(), oy*this.width+x, oy*this.width+x+w);
             
             System.arraycopy(rowData, 0, buffer, i*w, w);
         }
@@ -43,7 +44,7 @@ public class Signal {
         return new Signal(buffer, h, w);
     }
     
-    protected void setSignal(Signal input, int y, int x){
+    public void setSignal(Signal input, int y, int x){
         
         double[] inData = input.getData();
         int h = input.height;

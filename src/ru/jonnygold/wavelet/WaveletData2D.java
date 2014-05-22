@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
 import java.util.Arrays;
 
@@ -10,59 +10,88 @@ import java.util.Arrays;
  *
  * @author Vanchpuck
  */
-public class WaveletData2D extends WaveletData<WaveletData1D> {
+public class WaveletData2D<T extends Signal> extends WaveletData<WaveletData1D<T>> {
 
-    private WaveletData1D scaled;
-    private WaveletData1D wavelet;
+	public enum Segment {
+		LL {
+			@Override
+			public Signal getSignal(WaveletData2D<Signal> wData2D) {
+				return wData2D.getScaled().getScaled();
+			}
+		},
+		LH {
+			@Override
+			public Signal getSignal(WaveletData2D<Signal> wData2D) {
+				return wData2D.getScaled().getWavelet();
+			}
+		},
+		HL {
+			@Override
+			public Signal getSignal(WaveletData2D<Signal> wData2D) {
+				return wData2D.getWavelet().getScaled();
+			}
+		},
+		HH {
+			@Override
+			public Signal getSignal(WaveletData2D<Signal> wData2D) {
+				return wData2D.getWavelet().getWavelet();
+			}
+		};
+		
+		public abstract Signal getSignal(WaveletData2D<Signal> wData2D);
+		
+	}
+	
+    private WaveletData1D<T> scaled;
+    private WaveletData1D<T> wavelet;
     
-    protected WaveletData2D(WaveletData1D scaled, WaveletData1D wavelet, int h, int w){
+    protected WaveletData2D(WaveletData1D<T> scaled, WaveletData1D<T> wavelet, int h, int w){
         super(h, w, TransformDirection.ROW_TRANSFORM);
         this.scaled = scaled;
         this.wavelet = wavelet;
     }
     
     @Override
-    public WaveletData1D getScaled() {
+    public WaveletData1D<T> getScaled() {
         return this.scaled;
     }
 
     @Override
-    public WaveletData1D getWavelet() {
+    public WaveletData1D<T> getWavelet() {
         return this.wavelet;
     }
 
     @Override
-    void setScaled(WaveletData1D scaled) throws Exception {
+    void setScaled(WaveletData1D<T> scaled) throws Exception {
         this.scaled = scaled;
     }
 
     @Override
-    void setWavelet(WaveletData1D wavelet) throws Exception {
+    void setWavelet(WaveletData1D<T> wavelet) throws Exception {
         this.wavelet = wavelet;
     }
     
     @Override
-    public double[] getData(){
-        
+    public double[] getData(){        
         double[] data = new double[super.height*super.width];
+        double[] tmp = null;
         
-        if(this.direction == TransformDirection.COL_TRANSFORM){
-            double[] tmp = scaled.getData();
+        switch(this.direction){
+        case COL_TRANSFORM :
+        	tmp = scaled.getData();
             System.arraycopy(tmp, 0, data, 0, tmp.length);
             
             tmp = wavelet.getData();
             System.arraycopy(tmp, 0, data, data.length>>1, tmp.length);
-        }
-        else if(this.direction == TransformDirection.ROW_TRANSFORM){
-            int h = this.scaled.height;
+            break;
+        case ROW_TRANSFORM :
+        	int h = this.scaled.height;
             int w = this.scaled.width;
             
             double[] scaledData = this.scaled.getData();
             double[] waveletData = this.wavelet.getData();
             
-            double[] tmp;
-            
-            for(int y=0; y<this.height; y++){
+            for(int y=0; y<h; y++){
                 
                 tmp = Arrays.copyOfRange(scaledData, y*w, y*w+w);
                 System.arraycopy(tmp, 0, data, y*this.width, w);
@@ -70,12 +99,9 @@ public class WaveletData2D extends WaveletData<WaveletData1D> {
                 tmp = Arrays.copyOfRange(waveletData, y*w, y*w+w);
                 System.arraycopy(tmp, 0, data, y*this.width+w, w);
             }
-        }
-        else{
-            //#######################
-            //ИСПРАВИТЬ EXCEPTION!!!!
-            //#######################
-            throw new IndexOutOfBoundsException("Неизвестный индикатор направления преобразования");
+            break;
+        default :
+        	throw new IllegalArgumentException("Неизвестный индикатор направления преобразования");
         }
         return data;
     }

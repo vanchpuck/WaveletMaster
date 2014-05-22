@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
-import java.util.Arrays;
 
 /**
  *

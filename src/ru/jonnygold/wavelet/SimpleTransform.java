@@ -2,52 +2,58 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
 import java.util.Arrays;
-import javax.xml.transform.Source;
-import ru.jonnygold.wavelet.filters.WaveletFilter;
+
+import com.jonnygold.wavelet.filter.WaveletFilter;
 
 /**
  *
  * @author Vanchpuck
  */
-public class SimpleTransform extends TransformLogic{
+public class SimpleTransform implements TransformLogic{
 
     /* *************************************************
      * ПЕРЕДЕЛАТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      * *************************************************/
-    private final double nom = Math.sqrt(2);
+    @SuppressWarnings("unused")
+	private final double nom = Math.sqrt(2);
     
     @Override
-    WaveletData1D getDirectTransform(Signal input, WaveletFilter filter, int direction) {
+    public <T extends Signal> WaveletData1D<T> getDirectTransform(T input, WaveletFilter filter, TransformDirection direction) {
         
-        WaveletData1D transform;
+        WaveletData1D<T> transform;
         
         switch(direction){
-            case TransformDirection.COL_TRANSFORM : transform = getColDirectTransform(input, filter);break;
-            default : transform = getRowDirectTransform(input, filter);
+            case COL_TRANSFORM : 
+            	transform = getColDirectTransform(input, filter);break;
+            default : 
+            	transform = getRowDirectTransform(input, filter);
         }
         
         return transform;
     }
     
     @Override
-    public Signal getInverseTransform(WaveletData input, WaveletFilter filter) {
+    public <T extends Signal> T getInverseTransform(WaveletData<T> input, WaveletFilter filter) {
         
-        Signal src;
+        T src;
         
         switch(input.direction){
-            case TransformDirection.ROW_TRANSFORM : src = getRowInverseTransform(input, filter); break;
-            case TransformDirection.COL_TRANSFORM : src = getColInverseTransform(input, filter); break;
-            default : throw new IllegalArgumentException("Illegal transform direction code");
+            case ROW_TRANSFORM : 
+            	src = getRowInverseTransform(input, filter); break;
+            case COL_TRANSFORM : 
+            	src = getColInverseTransform(input, filter); break;
+            default : 
+            	throw new IllegalArgumentException("Illegal transform direction code");
         }
         return src;
         
     }
     
     
-    private WaveletData1D getRowDirectTransform(Signal input, WaveletFilter filter){
+    private <T extends Signal> WaveletData1D<T> getRowDirectTransform(Signal input, WaveletFilter filter){
         
         double[] inputData = input.getData();
         
@@ -56,8 +62,8 @@ public class SimpleTransform extends TransformLogic{
         
         double[] scaledData = new double[h*w];
         double[] waveletData = new double[h*w];
-        Signal scaled = new Signal(scaledData, h, w);
-        Signal wavelet = new Signal(waveletData, h, w);
+        T scaled = (T) new Signal(scaledData, h, w);
+        T wavelet = (T) new Signal(waveletData, h, w);
         
         double[] tmpRow;
         
@@ -76,12 +82,13 @@ public class SimpleTransform extends TransformLogic{
             wavelet.setSignal(new Signal(tmpWavelet, 1, w), y, 0);
         }
         
-        return new WaveletData1D(scaled, wavelet, input.height, input.width, TransformDirection.ROW_TRANSFORM);
+        return new WaveletData1D<T>(scaled, wavelet, input.height, input.width, TransformDirection.ROW_TRANSFORM);
         
     }
     
     private void convolutionDirect(double[] scaled, double[] wavelet, double[] data, WaveletFilter filter){
-        int fHalf = filter.h.length>>1;
+        @SuppressWarnings("unused")
+		int fHalf = filter.h.length>>1;
         
         for (int i=0,j=0; j< data.length-(filter.h.length-1); i++,j+=2) {
             scaled[i] = 0;
@@ -167,7 +174,7 @@ public class SimpleTransform extends TransformLogic{
 //        }
     }
     
-    private WaveletData1D getColDirectTransform(Signal input, WaveletFilter filter){
+    private <T extends Signal> WaveletData1D<T> getColDirectTransform(T input, WaveletFilter filter){
         
         double[] data = input.getData();
         
@@ -197,7 +204,7 @@ public class SimpleTransform extends TransformLogic{
         return new WaveletData1D(scaled, wavelet, input.height, input.width, TransformDirection.COL_TRANSFORM);
     }
     
-    private Signal getRowInverseTransform(WaveletData input, WaveletFilter filter){
+    private <T extends Signal> T getRowInverseTransform(WaveletData<T> input, WaveletFilter filter){
         
         Signal scaled = input.getScaled();
         Signal wavelet = input.getWavelet();
@@ -206,11 +213,12 @@ public class SimpleTransform extends TransformLogic{
         int height = input.getScaled().height;
         
         double[] srcData = new double[input.height*input.width];
-        Signal src = new Signal(srcData, input.height, input.width);
+        T src = (T) new Signal(srcData, input.height, input.width);
         
         double[] tmpScaled, tmpWavelet;
         
-        int fHalf = filter.h.length>>1;
+        @SuppressWarnings("unused")
+		int fHalf = filter.h.length>>1;
         
         double[] tmp;
         
@@ -228,7 +236,7 @@ public class SimpleTransform extends TransformLogic{
         return src;
     }
     
-    private Signal getColInverseTransform(WaveletData input, WaveletFilter filter){
+    private <T extends Signal> T getColInverseTransform(WaveletData<T> input, WaveletFilter filter){
         
         Signal scaled = input.getScaled();
         Signal wavelet = input.getWavelet();
@@ -236,7 +244,7 @@ public class SimpleTransform extends TransformLogic{
         int width = scaled.width;
         int height = scaled.height;
         
-        Signal src = new Signal(new double[input.height*input.width], input.height, input.width);
+        T src = (T) new Signal(new double[input.height*input.width], input.height, input.width);
         
         double[] tmpScaled, tmpWavelet, tmp;
         

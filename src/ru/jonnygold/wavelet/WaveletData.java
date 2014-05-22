@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
 /**
  *
@@ -10,9 +10,9 @@ package ru.jonnygold.wavelet;
  */
 public abstract class WaveletData <T extends Signal> extends Signal{
         
-    public final int direction;
+    public final TransformDirection direction;
     
-    protected WaveletData(int h, int w, int direction){
+    protected WaveletData(int h, int w, TransformDirection direction){
         super(h, w);
         this.direction = direction;
     }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet.filters;
+package com.jonnygold.wavelet.filters;
 
 /**
  *
@@ -15,9 +15,7 @@ public class HaarFilter extends WaveletFilter{
     }
     
     public static HaarFilter getInstance(){
-//        double[] h = new double[]{0.4829629131445341, 0.8365163037378097, 0.2241438680420134, -0.1294095225512604};
-//        double[] g = new double[]{-0.1294095225512604, -0.2241438680420134, 0.8365163037378097, -0.4829629131445341};
-        double[] h = new double[]{0.5,0.5};
+    	double[] h = new double[]{0.5,0.5};
         double[] g = new double[]{0.5,-0.5};
         
         double[] ih = new double[]{1,1};

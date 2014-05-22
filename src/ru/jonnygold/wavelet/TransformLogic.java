@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
-import ru.jonnygold.wavelet.filters.WaveletFilter;
+import com.jonnygold.wavelet.filter.WaveletFilter;
 
 /**
  *
@@ -14,10 +14,10 @@ import ru.jonnygold.wavelet.filters.WaveletFilter;
  * 
  * ВОЗМОЖНО, ЛУЧШЕ СДЕЛАТЬ ЕГО ИНТЕРФЕЙСОМ
  */
-public abstract class TransformLogic {
+public interface TransformLogic {
     
-    abstract WaveletData1D getDirectTransform(Signal input, WaveletFilter filter, int direction);
+    <T extends Signal> WaveletData1D<T> getDirectTransform(T input, WaveletFilter filter, TransformDirection direction);
     
-    abstract Signal getInverseTransform(WaveletData input, WaveletFilter filter);
+    <T extends Signal> T getInverseTransform(WaveletData<T> input, WaveletFilter filter);
     
 }

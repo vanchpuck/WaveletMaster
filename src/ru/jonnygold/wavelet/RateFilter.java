@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet;
+package com.jonnygold.wavelet;
 
 /**
  *
  * @author Vanchpuck
  */
-public class RateFilter extends Transformer{
+public class RateFilter implements Transformer{
     
     private int border;
     
@@ -20,8 +20,8 @@ public class RateFilter extends Transformer{
     }
 
     @Override
-    public WaveletData1D getDirectTransform(Signal input, int direction) {
-        WaveletData1D transformed = transformer.getDirectTransform(input, direction);
+    public <T extends Signal> WaveletData1D<T> getDirectTransform(T input, TransformDirection direction) {
+        WaveletData1D<T> transformed = transformer.getDirectTransform(input, direction);
         
         Signal wavelet = transformed.getWavelet();
         
@@ -33,8 +33,8 @@ public class RateFilter extends Transformer{
     }
 
     @Override
-    public WaveletData2D getDirectTransform2D(Signal input) {
-        WaveletData2D transformed = transformer.getDirectTransform2D(input);
+    public <T extends Signal>  WaveletData2D<T> getDirectTransform2D(T input) {
+        WaveletData2D<T> transformed = transformer.getDirectTransform2D(input);
         
         double[] data = transformed.getScaled().getWavelet().getData();
         filter(data, this.border);
@@ -57,12 +57,12 @@ public class RateFilter extends Transformer{
     }
 
     @Override
-    public Signal getInverseTransform(WaveletData1D input) {
+    public <T extends Signal> T getInverseTransform(WaveletData1D<T> input) {
         return transformer.getInverseTransform(input);
     }
 
     @Override
-    public Signal getInverseTransform2D(WaveletData2D input) {
+    public <T extends Signal> T getInverseTransform2D(WaveletData2D<T> input) {
         return transformer.getInverseTransform2D(input);
     }
     

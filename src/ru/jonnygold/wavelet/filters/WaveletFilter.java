@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ru.jonnygold.wavelet.filters;
+package com.jonnygold.wavelet.filters;
 
-import ru.jonnygold.wavelet.*;
+import com.jonnygold.wavelet.*;
 
 /**
  *
